@@ -1,0 +1,63 @@
+- hosts: all
+  tasks:
+          - name: "copying rpm for java jdk"
+            copy:
+                  src: "jdk-8u171-linux-x64.rpm"
+                  dest: "/root/"
+ 
+          - name: "copying rpm for hadoop"
+            copy:
+                  src: "hadoop-1.2.1-1.x86_64.rpm"
+                  dest: "/root/"
+ 
+          - name: "installing "
+             command: "rpm -ivh /root/jdk-8u171-linux-x64.rpm --force"
+                  
+          - name: "installing hadoop..."
+            command: "rpm -i /root/hadoop-1.2.1-1.x86_64.rpm --force"
+           
+- hosts: namenode
+  tasks:
+           - name: "creating directory for namenode" 
+             file:
+                  dest: "/nn"
+                  state: directory
+ 
+           - name: "configuring hdfs file for namenode"
+             copy:
+                  dest: "/etc/hadoop/hdfs-site.xml"
+                  src: namenode.xml 
+
+           - name: "configure core-site.xml for namenode"  
+             copy:
+                   dest: "/etc/hadoop/core-site.xml" 
+                   src: dn_core.xml
+
+           - name: "formating name node" 
+             command: "hadoop namenode -format -force"                 
+                  
+           - name: "starting namenode..."
+             command: "hadoop-daemon.sh start namenode"
+
+- hosts: datanode
+  tasks:
+           - name: "creating directory to be shared to namenode"
+             file: 
+                  dest: "/dn"
+                  state: directory
+            
+           - name: "configuring hdfs-site.xml for datanodes"
+             copy:
+                  dest: "/etc/hadoop/hdfs-site.xml"
+                  src: datanode.xml
+
+           - name: "configure core-site.xml"
+             copy:
+                  dest: "/etc/hadoop/core-site.xml"
+                  src: dn_core.xml
+
+           - name: "starting datanodes"
+             command: "hadoop-daemon.sh start datanode"
+          
+                
+

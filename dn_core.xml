@@ -1,0 +1,6 @@
+<configuration>
+	<property>
+		<name> fs.default.name </name>
+		<value> hdfs://<your namenode ip>:<port> </value>
+	</property>
+</configuration>
